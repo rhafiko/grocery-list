@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { ShoppingBasket, Plus, Trash2, Check, X } from 'lucide-react'
+import React, { useState, useEffect } from 'react'
+import { ShoppingBasket, Plus, Trash2, Check } from 'lucide-react'
 
 interface GroceryItem {
   id: string
@@ -7,9 +7,21 @@ interface GroceryItem {
   purchased: boolean
 }
 
+// Chave para armazenamento no localStorage
+const STORAGE_KEY = 'grocery-list-items'
+
 function App() {
-  const [items, setItems] = useState<GroceryItem[]>([])
+  // Inicializa o estado com os dados do localStorage, se existirem
+  const [items, setItems] = useState<GroceryItem[]>(() => {
+    const savedItems = localStorage.getItem(STORAGE_KEY)
+    return savedItems ? JSON.parse(savedItems) : []
+  })
   const [newItem, setNewItem] = useState('')
+
+  // Salva os items no localStorage sempre que houver mudanças
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
+  }, [items])
 
   const addItem = (e: React.FormEvent) => {
     e.preventDefault()
